@@ -21,9 +21,9 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/calendar', calendarRoutes);
 
-app.use(express.static(path.join(__dirname, '../../client/dist')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 if (require.main === module) {
