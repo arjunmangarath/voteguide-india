@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #080f20; color: #f1f5f9; }
+
+@layer utilities {
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+  .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+  .glow-saffron { box-shadow: 0 0 20px rgba(255,153,51,0.3); }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
