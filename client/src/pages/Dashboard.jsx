@@ -19,21 +19,16 @@ export default function Dashboard() {
   useEffect(() => { loadData(); }, []);
 
   async function loadData() {
-    try {
-      const headers = sessionHeaders();
-      const [profileRes, newsRes, calRes] = await Promise.all([
-        axios.post('/api/auth/profile', {}, { headers }),
-        axios.get('/api/news', { headers }),
-        axios.get('/api/calendar', { headers }),
-      ]);
-      setProfile(profileRes.data.profile || {});
-      setNews(newsRes.data.news || []);
-      setEvents(calRes.data.events || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setNewsLoading(false);
-    }
+    const headers = sessionHeaders();
+    const [profileRes, newsRes, calRes] = await Promise.allSettled([
+      axios.post('/api/auth/profile', {}, { headers }),
+      axios.get('/api/news', { headers }),
+      axios.get('/api/calendar', { headers }),
+    ]);
+    if (profileRes.status === 'fulfilled') setProfile(profileRes.value.data.profile || {});
+    if (newsRes.status === 'fulfilled') setNews(newsRes.value.data.news || []);
+    if (calRes.status === 'fulfilled') setEvents(calRes.value.data.events || []);
+    setNewsLoading(false);
   }
 
   async function refreshNews() {
