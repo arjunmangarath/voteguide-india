@@ -5,6 +5,25 @@ import { sessionHeaders } from '../../session';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 
+const GREETINGS = {
+  Hindi:     (s) => `नमस्ते! 🙏 मैं VoteGuide India हूँ, आपका चुनाव सहायक।\n\nमैं भारतीय चुनाव, मतदाता पंजीकरण, मतदान प्रक्रियाएं और${s ? ` ${s} में` : ' भारत भर में'} आगामी चुनाव कार्यक्रम समझने में मदद कर सकता हूँ।\n\nआप क्या जानना चाहेंगे?`,
+  Telugu:    (s) => `నమస్కారం! 🙏 నేను VoteGuide India, మీ ఎన్నికల మార్గదర్శి.\n\nభారత ఎన్నికలు, ఓటర్ నమోదు, పోలింగ్ విధానాలు మరియు${s ? ` ${s}లో` : ' భారతదేశంలో'} రాబోయే ఎన్నికల షెడ్యూల్‌లను అర్థం చేసుకోవడంలో నేను మీకు సహాయం చేయగలను.\n\nమీరు ఏమి తెలుసుకోవాలనుకుంటున్నారు?`,
+  Bengali:   (s) => `নমস্কার! 🙏 আমি VoteGuide India, আপনার নির্বাচন সহায়ক।\n\nভারতীয় নির্বাচন, ভোটার নিবন্ধন, ভোটদান প্রক্রিয়া এবং${s ? ` ${s}-এ` : ' ভারত জুড়ে'} আসন্ন নির্বাচনের সময়সূচি বুঝতে সাহায্য করতে পারি।\n\nআপনি কী জানতে চান?`,
+  Marathi:   (s) => `नमस्कार! 🙏 मी VoteGuide India आहे, तुमचा निवडणूक मार्गदर्शक।\n\nभारतीय निवडणुका, मतदार नोंदणी, मतदान प्रक्रिया आणि${s ? ` ${s} मध्ये` : ' भारतभर'} आगामी निवडणूक वेळापत्रके समजून घेण्यात मदत करू शकतो।\n\nतुम्हाला काय जाणून घ्यायचे आहे?`,
+  Tamil:     (s) => `வணக்கம்! 🙏 நான் VoteGuide India, உங்கள் தேர்தல் வழிகாட்டி.\n\nஇந்திய தேர்தல்கள், வாக்காளர் பதிவு, வாக்களிக்கும் நடைமுறைகள் மற்றும்${s ? ` ${s}-இல்` : ' இந்தியா முழுவதும்'} வரவிருக்கும் தேர்தல் அட்டவணைகளை புரிந்துகொள்ள உதவுவேன்.\n\nநீங்கள் என்ன தெரிந்துகொள்ள விரும்புகிறீர்கள்?`,
+  Gujarati:  (s) => `નમસ્તે! 🙏 હું VoteGuide India છું, તમારો ચૂંટણી સહાયક.\n\nભારતીય ચૂંટણીઓ, મતદાર નોંધણી, મતદાન પ્રક્રિયાઓ અને${s ? ` ${s}માં` : ' ભારત ભરમાં'} આગામી ચૂંટણી કાર્યક્રમો સમજવામાં મદદ કરી શકું છું.\n\nતમે શું જાણવા માગો છો?`,
+  Kannada:   (s) => `ನಮಸ್ಕಾರ! 🙏 ನಾನು VoteGuide India, ನಿಮ್ಮ ಚುನಾವಣಾ ಮಾರ್ಗದರ್ಶಿ.\n\nಭಾರತೀಯ ಚುನಾವಣೆಗಳು, ಮತದಾರ ನೋಂದಣಿ, ಮತದಾನ ಕಾರ್ಯವಿಧಾನಗಳು ಮತ್ತು${s ? ` ${s}ದಲ್ಲಿ` : ' ಭಾರತದಾದ್ಯಂತ'} ಮುಂಬರುವ ಚುನಾವಣಾ ವೇಳಾಪಟ್ಟಿಗಳನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಸಹಾಯ ಮಾಡಬಲ್ಲೆ.\n\nನೀವು ಏನು ತಿಳಿಯಲು ಬಯಸುತ್ತೀರಿ?`,
+  Malayalam: (s) => `നമസ്കാരം! 🙏 ഞാൻ VoteGuide India, നിങ്ങളുടെ തിരഞ്ഞെടുപ്പ് സഹായി.\n\nഭാരതീയ തിരഞ്ഞെടുപ്പുകൾ, വോട്ടർ രജിസ്ട്രേഷൻ, വോട്ടിംഗ് നടപടിക്രമങ്ങൾ, ${s ? `${s}-ലെ` : 'ഭാരതം മുഴുവൻ'} ആസന്നമായ ഷെഡ്യൂളുകൾ മനസ്സിലാക്കാൻ ഞാൻ സഹായിക്കും.\n\nനിങ്ങൾക്ക് എന്ത് അറിയണം?`,
+  Punjabi:   (s) => `ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! 🙏 ਮੈਂ VoteGuide India ਹਾਂ, ਤੁਹਾਡਾ ਚੋਣ ਸਹਾਇਕ।\n\nਭਾਰਤੀ ਚੋਣਾਂ, ਵੋਟਰ ਰਜਿਸਟ੍ਰੇਸ਼ਨ, ਵੋਟਿੰਗ ਪ੍ਰਕਿਰਿਆਵਾਂ ਅਤੇ${s ? ` ${s} ਵਿੱਚ` : ' ਪੂਰੇ ਭਾਰਤ ਵਿੱਚ'} ਆਉਣ ਵਾਲੀਆਂ ਚੋਣਾਂ ਦੇ ਕਾਰਜਕ੍ਰਮ ਸਮਝਣ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ।\n\nਤੁਸੀਂ ਕੀ ਜਾਣਨਾ ਚਾਹੋਗੇ?`,
+  Odia:      (s) => `ନମସ୍କାର! 🙏 ମୁଁ VoteGuide India, ଆପଣଙ୍କ ନିର୍ବାଚନ ସହାୟକ।\n\nଭାରତୀୟ ନିର୍ବାଚନ, ଭୋଟର ପଞ୍ଜୀକରଣ, ଭୋଟ ଦେବା ପ୍ରକ୍ରିୟା ଏବଂ${s ? ` ${s}ରେ` : ' ଭାରତ ଜୁଡ଼ାଇ'} ଆସନ୍ତା ନିର୍ବାଚନ ସମୟ ସୂଚୀ ବୁଝିବାରେ ସାହାଯ୍ୟ କରିପାରିବି।\n\nଆପଣ କ'ଣ ଜାଣିବାକୁ ଚାହୁଁଛନ୍ତି?`,
+  Urdu:      (s) => `السلام علیکم! 🙏 میں VoteGuide India ہوں، آپ کا انتخابات رہنما۔\n\nہندوستانی انتخابات، ووٹر رجسٹریشن، ووٹنگ کے طریقہ کار اور${s ? ` ${s} میں` : ' پورے ہندوستان میں'} آنے والے انتخابات کے شیڈول کو سمجھنے میں آپ کی مدد کر سکتا ہوں۔\n\nآپ کیا جاننا چاہتے ہیں؟`,
+};
+
+function getGreeting(lang, state) {
+  if (lang && GREETINGS[lang.name]) return GREETINGS[lang.name](state);
+  return `Namaste! 🙏 I'm VoteGuide India, your election companion.\n\nI can help you understand Indian elections, voter registration, polling procedures, and upcoming election schedules${state ? ` in ${state}` : ' across India'}.\n\nWhat would you like to know?`;
+}
+
 const QUICK_ACTIONS = [
   { label: '📅 Show Timeline', msg: 'Show me the upcoming election timeline for India' },
   { label: '📋 How to Register', msg: 'How do I register as a voter in India?' },
@@ -43,16 +62,20 @@ function buildAutoMessage(interests = [], voterType, state) {
 }
 
 export default function ChatPanel({ userState, userProfile, language }) {
-  const [messages, setMessages] = useState([{
-    role: 'model',
-    content: `Namaste! 🙏 I'm VoteGuide India, your election companion.\n\nI can help you understand Indian elections, voter registration, polling procedures, and upcoming election schedules${userState ? ` in ${userState}` : ' across India'}.\n\nWhat would you like to know?`,
-  }]);
+  const [messages, setMessages] = useState(() => [{ role: 'model', content: getGreeting(language, userState) }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [autoTriggered, setAutoTriggered] = useState(false);
   const bottomRef = useRef(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length > 1) return prev;
+      return [{ role: 'model', content: getGreeting(language, userState) }];
+    });
+  }, [language, userState]);
 
   useEffect(() => {
     if (autoTriggered || !userProfile) return;
@@ -75,7 +98,7 @@ export default function ChatPanel({ userState, userProfile, language }) {
       const firstUser = raw.findIndex((m) => m.role === 'user');
       const history = firstUser === -1 ? [] : raw.slice(firstUser).map((m) => ({ role: m.role, content: m.content }));
       const serverMsg = language
-        ? `[Respond entirely in ${language.name} (${language.native}). Do not use English.] ${msg}`
+        ? `[Please respond in ${language.name} (${language.native}).] ${msg}`
         : msg;
       const { data } = await axios.post('/api/chat', { message: serverMsg, history }, {
         headers: sessionHeaders(),

@@ -90,12 +90,12 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-900 flex flex-col">
+    <div className="h-screen bg-navy-900 flex flex-col overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-[#1a0a2e] pointer-events-none" />
 
       <header
-        className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/5 glass-dark"
-        style={{ background: 'linear-gradient(90deg, rgba(255,153,51,0.18) 0%, rgba(255,153,51,0.04) 28%, rgba(255,255,255,0.04) 50%, rgba(19,136,8,0.04) 72%, rgba(19,136,8,0.18) 100%)' }}
+        className="relative z-20 shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/10 glass-dark"
+        style={{ background: 'linear-gradient(90deg, rgba(255,153,51,0.25) 0%, rgba(255,153,51,0.06) 30%, rgba(15,20,40,0.85) 50%, rgba(19,136,8,0.06) 70%, rgba(19,136,8,0.25) 100%)' }}
       >
         <div className="flex items-center gap-3">
           <svg width="28" height="19" viewBox="0 0 30 20" className="rounded-[2px] shadow-sm shrink-0">
