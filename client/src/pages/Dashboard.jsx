@@ -50,9 +50,9 @@ export default function Dashboard() {
 
       <header className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/5 glass-dark">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🗳️</span>
+          <span className="text-2xl">🇮🇳</span>
           <div>
-            <h1 className="text-white font-bold text-lg leading-none">VoteGuide India</h1>
+            <h1 className="text-white font-bold text-lg leading-none">VoteGuide India <span className="text-base">🇮🇳</span></h1>
             {profile?.state && <p className="text-saffron-400 text-xs mt-0.5">{profile.state}</p>}
           </div>
         </div>
@@ -100,21 +100,29 @@ export default function Dashboard() {
         </aside>
 
         <main className="flex flex-col overflow-hidden">
-          <div className="lg:hidden flex border-b border-white/5">
-            {[
-              { id: 'chat', icon: <span>💬</span>, label: 'Chat' },
-              { id: 'news', icon: <Newspaper size={14} />, label: 'News' },
-              { id: 'timeline', icon: <Calendar size={14} />, label: 'Timeline' },
-              { id: 'map', icon: <Map size={14} />, label: 'Map' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors ${activeTab === tab.id ? 'text-saffron-400 border-b-2 border-saffron-400' : 'text-slate-500'}`}
-              >
-                {tab.icon} {tab.label}
-              </button>
-            ))}
+          <div className="lg:hidden flex flex-col border-b border-white/5">
+            <div className="flex h-[3px]">
+              <div className="flex-[1] bg-[#FF9933]" />
+              <div className="flex-[1] bg-white" />
+              <div className="flex-[1] bg-[#138808]" />
+            </div>
+            <div className="flex">
+              {[
+                { id: 'chat',     icon: <span>💬</span>,          label: 'Chat',     color: '#FF9933' },
+                { id: 'news',     icon: <Newspaper size={14} />,  label: 'News',     color: '#ffffff' },
+                { id: 'timeline', icon: <Calendar size={14} />,   label: 'Timeline', color: '#138808' },
+                { id: 'map',      icon: <Map size={14} />,        label: 'Map',      color: '#FF9933' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={activeTab === tab.id ? { color: tab.color, borderBottomColor: tab.color } : {}}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors border-b-2 border-transparent ${activeTab === tab.id ? '' : 'text-slate-500'}`}
+                >
+                  {tab.icon} {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="flex-1 overflow-hidden">
