@@ -10,7 +10,7 @@
 
 ## What It Does
 
-VoteGuide India is a full-stack civic-tech assistant built for **Promptwars Challenge 2**. It helps Indian voters — first-time and experienced alike — navigate the Indian electoral system through:
+VoteGuide India is a full-stack civic-tech assistant for every Indian citizen. It helps voters — first-time and experienced alike — navigate the Indian electoral system through:
 
 - A **personalised 4-step onboarding wizard** that captures your voter type, state, preferred language, and interests
 - An **AI chat assistant** powered by Gemini 2.5 Flash that auto-generates contextual opening questions based on your profile and answers election-related questions in plain language
@@ -124,7 +124,7 @@ Browser
 ## Project Structure
 
 ```
-Promptwars/
+voteguide-india/
 ├── Dockerfile                  # Multi-stage build (client → server)
 ├── firebase.json               # Firestore rules config
 ├── firestore.rules             # Session-scoped read/write rules
@@ -367,15 +367,15 @@ The React build is done inside Docker (Cloud Build has no `.env.local`). Instead
 
 ---
 
-## Promptwars Challenge 2 Compliance
+## Feature Checklist
 
-| Requirement | Status |
+| Feature | Status |
 |---|---|
 | Public GitHub repository | ✅ github.com/arjunmangarath/voteguide-india |
-| Google Cloud Run URL | ✅ voteguide-india-296722128306.asia-south1.run.app |
-| 5 Google Services | ✅ Gemini, Custom Search, Firestore, Maps JS API, Cloud Run |
+| Live URL | ✅ voteguide-india-296722128306.asia-south1.run.app |
+| 5 Google Services | ✅ Vertex AI, Custom Search, Firestore, Maps JS API, Cloud Run |
 | Interactive election assistant | ✅ Gemini chat with auto-triggered personalised opening |
 | Timeline and steps | ✅ Election timeline + wizard-driven step-by-step guidance |
+| Multilingual | ✅ 11 Indian regional languages, full UI + AI response localisation |
 | Accessible | ✅ Semantic HTML, keyboard-navigable, mobile tabs |
 | Tests | ✅ 8 Jest + Supertest tests (all passing) |
-| README | ✅ This document |
