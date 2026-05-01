@@ -104,6 +104,7 @@ export default function Wizard() {
             <button
               key={opt.id}
               onClick={() => { setVoterType(opt.id); setStep(1); }}
+              aria-pressed={voterType === opt.id}
               className={`glass rounded-xl p-6 text-center hover:border-saffron-400 transition-all ${voterType === opt.id ? 'border-saffron-400' : ''}`}
             >
               <div className="text-4xl mb-3">{opt.icon}</div>
@@ -121,6 +122,7 @@ export default function Wizard() {
           <input
             type="text"
             placeholder="Search state…"
+            aria-label="Search for your state"
             value={stateSearch}
             onChange={(e) => setStateSearch(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-saffron-400 mb-3"
@@ -186,6 +188,7 @@ export default function Wizard() {
             <button
               key={interest.id}
               onClick={() => toggleInterest(interest.id)}
+              aria-pressed={interests.includes(interest.id)}
               className={`w-full flex items-center gap-4 glass rounded-xl p-4 text-left transition-all ${interests.includes(interest.id) ? 'border-saffron-400 bg-saffron-500/10' : 'hover:border-white/20'}`}
             >
               <span className="text-xl">{interest.label.split(' ')[0]}</span>
@@ -222,7 +225,14 @@ export default function Wizard() {
             <span className="text-3xl">🗳️</span>
             <h1 className="text-2xl font-bold text-white">VoteGuide India</h1>
           </div>
-          <div className="flex gap-2 mb-2">
+          <div
+            className="flex gap-2 mb-2"
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemin={1}
+            aria-valuemax={steps.length}
+            aria-label={`Step ${step + 1} of ${steps.length}`}
+          >
             {steps.map((_, i) => (
               <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? 'bg-saffron-400' : 'bg-white/10'}`} />
             ))}

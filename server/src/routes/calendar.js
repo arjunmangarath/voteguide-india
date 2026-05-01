@@ -9,6 +9,7 @@ router.get('/', session, generalLimiter, async (req, res) => {
   try {
     const state = typeof req.query.state === 'string' ? req.query.state.trim() : '';
     const events = await getElectionCalendar(state);
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.json({ events });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch calendar' });

@@ -9,6 +9,7 @@ router.get('/', session, generalLimiter, async (req, res) => {
   try {
     const state = typeof req.query.state === 'string' ? req.query.state.trim() : '';
     const news = await fetchElectionNews(state);
+    res.setHeader('Cache-Control', 'public, max-age=900');
     res.json({ news });
   } catch (err) {
     console.error(err);

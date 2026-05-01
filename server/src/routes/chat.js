@@ -35,7 +35,10 @@ router.post('/', session, chatLimiter, async (req, res) => {
     const userDoc = await db.collection('sessions').doc(req.sessionId).get();
     userContext = userDoc.exists ? userDoc.data() : {};
 
-    const reply = await getChatResponse(message.trim(), userContext, history || []);
+    const validHistory = Array.isArray(history)
+      ? history.filter((h) => h && typeof h.content === 'string' && ['user', 'model'].includes(h.role))
+      : [];
+    const reply = await getChatResponse(message.trim(), userContext, validHistory);
 
     const chatRef = db.collection('sessions').doc(req.sessionId).collection('messages');
     await Promise.all([

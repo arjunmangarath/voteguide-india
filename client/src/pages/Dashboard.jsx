@@ -119,6 +119,7 @@ export default function Dashboard() {
                     <button
                       onClick={() => setLangMode((p) => !p)}
                       title={langMode ? 'Switch to English' : `Switch to ${lang.name}`}
+                      aria-pressed={langMode}
                       className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-all ${
                         langMode
                           ? 'bg-saffron-500/20 border-saffron-400 text-saffron-400'
@@ -143,7 +144,7 @@ export default function Dashboard() {
       </header>
 
       <div className="relative z-10 flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-0 overflow-hidden" style={{ height: 'calc(100vh - 65px)' }}>
-        <aside className="hidden lg:flex flex-col border-r border-white/5 overflow-hidden">
+        <aside className="hidden lg:flex flex-col border-r border-white/5 overflow-hidden" aria-label="Election news and polling booths">
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
             <div className="flex items-center gap-2 text-white font-semibold text-sm">
               <Newspaper size={15} className="text-saffron-400" /> Election News
@@ -160,6 +161,7 @@ export default function Dashboard() {
             {!newsLoading && news.length > 3 && (
               <button
                 onClick={() => setNewsExpanded((p) => !p)}
+                aria-expanded={newsExpanded}
                 className="w-full text-xs text-slate-500 hover:text-saffron-400 py-2 border border-white/5 rounded-xl transition-colors"
               >
                 {newsExpanded ? '▲ Show less' : `▼ Show ${news.length - 3} more`}
@@ -185,7 +187,7 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        <main className="flex flex-col overflow-hidden">
+        <main className="flex flex-col overflow-hidden" aria-label="AI election chat assistant">
           <div className="lg:hidden flex flex-col border-b border-white/5">
             <div className="flex h-[3px]">
               <div className="flex-[1] bg-[#FF9933]" />
@@ -237,7 +239,7 @@ export default function Dashboard() {
           </div>
         </main>
 
-        <aside className="hidden lg:flex flex-col border-l border-white/5 overflow-hidden">
+        <aside className="hidden lg:flex flex-col border-l border-white/5 overflow-hidden" aria-label="Election timeline">
           <div className="px-4 py-3 border-b border-white/5">
             <div className="flex items-center gap-2 text-white font-semibold text-sm">
               <Calendar size={15} className="text-saffron-400" /> Upcoming Elections

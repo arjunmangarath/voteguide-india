@@ -113,7 +113,7 @@ export default function ChatPanel({ userState, userProfile, language }) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4" role="log" aria-live="polite" aria-label="Chat messages" aria-busy={loading}>
         <AnimatePresence initial={false}>
           {messages.map((msg, i) => (
             <motion.div
@@ -185,11 +185,13 @@ export default function ChatPanel({ userState, userProfile, language }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about elections…"
+            aria-label="Ask about elections"
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-saffron-400"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
+            aria-label="Send message"
             className="bg-saffron-500 hover:bg-saffron-600 disabled:opacity-40 text-white p-2.5 rounded-xl transition-all"
           >
             <Send size={16} />
