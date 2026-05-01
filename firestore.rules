@@ -1,8 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /sessions/{sessionId} {
+      // Sessions are keyed by UUID; only the bearer of that UUID can read/write their own session.
+      allow read, write: if sessionId == request.auth.uid
+        || (request.auth == null && sessionId.matches('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'));
+    }
     match /sessions/{sessionId}/{document=**} {
-      allow read, write: if true;
+      allow read, write: if sessionId.matches('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
     }
   }
 }

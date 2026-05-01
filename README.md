@@ -162,9 +162,15 @@ voteguide-india/
     │       ├── search.js       # Custom Search + curated fallback
     │       └── calendar.js     # Election event data + isPast flag
     ├── tests/
-    │   ├── middleware/auth.test.js     # Session middleware tests
-    │   └── routes/chat.test.js        # Chat route tests
-    │   └── routes/news.test.js        # News route tests
+    │   ├── middleware/
+    │   │   └── auth.test.js            # Session middleware (7 tests)
+    │   └── routes/
+    │       ├── auth.test.js            # Profile GET/PUT (8 tests)
+    │       ├── chat.test.js            # Chat endpoint (8 tests)
+    │       ├── chat-history.test.js    # Chat history (3 tests)
+    │       ├── calendar.test.js        # Calendar endpoint (5 tests)
+    │       ├── news.test.js            # News endpoint (4 tests)
+    │       └── config.test.js          # Config endpoint (2 tests)
     └── .env.example
 ```
 
@@ -232,10 +238,14 @@ The Vite dev server proxies `/api/*` to `localhost:8080`.
 cd server && npm test
 ```
 
-8 tests covering:
-- Session middleware (valid ID, too-short ID, missing header)
-- `POST /api/chat` (success, empty message, missing session)
-- `GET /api/news` (success, missing session)
+36 tests across 7 suites with coverage reporting:
+- `middleware/auth.test.js` — session middleware (valid UUID, boundary lengths, missing/whitespace headers)
+- `routes/auth.test.js` — profile GET (existing/new user), PUT (valid, invalid voterType, missing state), Firestore errors
+- `routes/chat.test.js` — success, empty message, no session, valid history, 1000-char boundary, 1001-char → 400, rate-limited → friendly message, Gemini error → 500
+- `routes/news.test.js` — success, no session, state param passthrough, service error → 500
+- `routes/calendar.test.js` — returns array, no session, required fields, state param passthrough, service error → 500
+- `routes/chat-history.test.js` — GET /api/chat/history success, no session, Firestore error → 500
+- `routes/config.test.js` — returns mapsKey when set, returns empty string when unset
 
 ---
 
@@ -378,4 +388,4 @@ The React build is done inside Docker (Cloud Build has no `.env.local`). Instead
 | Timeline and steps | ✅ Election timeline + wizard-driven step-by-step guidance |
 | Multilingual | ✅ 11 Indian regional languages, full UI + AI response localisation |
 | Accessible | ✅ Semantic HTML, keyboard-navigable, mobile tabs |
-| Tests | ✅ 8 Jest + Supertest tests (all passing) |
+| Tests | ✅ 36 Jest + Supertest tests across 7 suites (all passing, with coverage) |
