@@ -12,7 +12,7 @@
 
 VoteGuide India is a full-stack civic-tech assistant built for **Promptwars Challenge 2**. It helps Indian voters — first-time and experienced alike — navigate the Indian electoral system through:
 
-- A **personalised 3-step onboarding wizard** that captures your state and interests
+- A **personalised 4-step onboarding wizard** that captures your voter type, state, preferred language, and interests
 - An **AI chat assistant** powered by Gemini 2.5 Flash that auto-generates contextual opening questions based on your profile and answers election-related questions in plain language
 - A **live election news feed** with curated and dynamic news from the Election Commission of India
 - An **election timeline** showing upcoming and past elections (last 12 months) with phase-wise dates, MCC dates, and results
@@ -24,7 +24,7 @@ VoteGuide India is a full-stack civic-tech assistant built for **Promptwars Chal
 
 | # | Service | How It Is Used |
 |---|---|---|
-| 1 | **Gemini API (gemini-2.5-flash)** | Core AI brain. Handles all election Q&A, personalised by user's state, voter type, and selected interests. Answers in user's language (English, Hindi, regional). |
+| 1 | **Vertex AI (gemini-2.5-flash)** | Core AI brain via Vertex AI. Handles all election Q&A, personalised by user's state, voter type, and selected interests. Responds in 11 Indian regional languages. Multi-model fallback: 2.5-flash → 2.0-flash → 2.0-flash-lite. |
 | 2 | **Google Custom Search API** | Fetches live Indian election news dynamically using state-aware queries (`{state} election 2026 India`). Falls back to curated ECI content if quota is unavailable. |
 | 3 | **Firebase Firestore** | Stores anonymous user sessions with profile data (state, voter type, interests). No login required — sessions are UUID-keyed, persisting across page refreshes. |
 | 4 | **Maps JavaScript API** | Interactive white-themed map showing user's state or GPS location with polling booth markers via the Places API `nearbySearch`. |
@@ -63,8 +63,9 @@ Browser
 ### Onboarding Wizard
 - **Step 1** — First-time voter or experienced voter?
 - **Step 2** — State selection with live search filter (all 32 Indian states and UTs)
-- **Step 3** — Interest multi-select: Register to Vote / Understand the Process / Track Elections / Find My Booth
-- Progress bar across all 3 steps with animated transitions
+- **Step 3** — Language selection: auto-suggests the regional language for the chosen state (e.g. Kannada for Karnataka), 12 languages supported
+- **Step 4** — Interest multi-select: Register to Vote / Understand the Process / Track Elections / Find My Booth
+- Progress bar across all 4 steps with animated transitions
 - "Skip for now" option on the last step
 
 ### AI Chat (Gemini 2.5 Flash)
@@ -74,7 +75,7 @@ Browser
 - **Chat history** — last 10 messages sent as history on each request (leading model messages filtered to avoid Gemini validation errors)
 - **Quick action buttons** — Show Timeline / How to Register / Find My Booth / Latest News / Voting Process
 - **Politically neutral** — system prompt enforces neutrality, no party/candidate recommendations
-- **Multilingual** — Gemini responds in Hindi or regional language if user writes in it
+- **Multilingual** — Full language mode: select a regional language in the wizard or toggle it in the header; the opening greeting, all AI replies, and busy-state messages are all returned in the selected language (11 languages: Hindi, Telugu, Bengali, Marathi, Tamil, Gujarati, Kannada, Malayalam, Punjabi, Odia, Urdu)
 
 ### Election News
 - Fetches live news via Google Custom Search API with state-aware query
@@ -110,7 +111,7 @@ Browser
 | AI Rendering | react-markdown (structured chat replies) |
 | Backend | Node.js 20, Express 4 |
 | Auth/DB | Firebase Firestore (anonymous UUID sessions) |
-| AI | Google Generative AI SDK (`@google/generative-ai`) |
+| AI | Google Gen AI SDK (`@google/genai`) with Vertex AI backend |
 | Maps | Google Maps JavaScript API + Places API |
 | Search | Google Custom Search JSON API |
 | Container | Docker (multi-stage: Node build → Express serve) |
@@ -201,6 +202,7 @@ cp server/.env.example server/.env
 Fill in `server/.env`:
 
 ```env
+# For local dev: use an AI Studio API key (Vertex AI is used in production via ADC)
 GEMINI_API_KEY=your_gemini_api_key
 CUSTOM_SEARCH_API_KEY=your_custom_search_api_key
 CUSTOM_SEARCH_ENGINE_ID=your_programmable_search_engine_id
@@ -209,6 +211,8 @@ FIREBASE_SERVICE_ACCOUNT=./firebase-service-account.json
 MAPS_API_KEY=your_maps_api_key
 PORT=8080
 ```
+
+> **Note:** In production (Cloud Run), the Gemini backend uses **Vertex AI** with Application Default Credentials — no `GEMINI_API_KEY` needed. Enable `aiplatform.googleapis.com` and grant `roles/aiplatform.user` to the Cloud Run service account.
 
 ```bash
 # 5. Download Firebase service account JSON from Firebase Console
