@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Map } from 'lucide-react';
 
 let mapsKeyPromise = null;
 function getMapsKey() {
@@ -11,16 +11,21 @@ function getMapsKey() {
 
 function loadScript(key) {
   if (document.getElementById('gmap-script')) {
-    return new Promise((resolve) => {
-      const check = setInterval(() => { if (window.google) { clearInterval(check); resolve(); } }, 150);
+    return new Promise((resolve, reject) => {
+      const deadline = Date.now() + 10000;
+      const check = setInterval(() => {
+        if (window.google) { clearInterval(check); resolve(); }
+        else if (Date.now() > deadline) { clearInterval(check); reject(new Error('timeout')); }
+      }, 150);
     });
   }
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const s = document.createElement('script');
     s.id = 'gmap-script';
     s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`;
     s.async = true;
     s.onload = resolve;
+    s.onerror = reject;
     document.head.appendChild(s);
   });
 }
@@ -110,7 +115,7 @@ export default function ConstituencyMap({ state }) {
     async function init() {
       const key = await getMapsKey();
       if (!key) { setStatus('error'); return; }
-      await loadScript(key);
+      try { await loadScript(key); } catch { setStatus('error'); return; }
       if (cancelled) return;
 
       if (state) {
@@ -142,6 +147,12 @@ export default function ConstituencyMap({ state }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl">
           <Loader2 size={18} className="text-saffron-400 animate-spin mb-1" />
           <p className="text-slate-500 text-xs">Finding polling booths…</p>
+        </div>
+      )}
+      {status === 'error' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl gap-1">
+          <Map size={18} className="text-slate-400" />
+          <p className="text-slate-500 text-xs text-center px-4">Map unavailable.<br />Check API key configuration.</p>
         </div>
       )}
     </div>

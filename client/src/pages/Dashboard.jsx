@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsExpanded, setNewsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('chat');
+  const [mapExpanded, setMapExpanded] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
@@ -48,11 +49,23 @@ export default function Dashboard() {
     <div className="min-h-screen bg-navy-900 flex flex-col">
       <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-[#1a0a2e] pointer-events-none" />
 
-      <header className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/5 glass-dark">
+      <header
+        className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/5 glass-dark"
+        style={{ background: 'linear-gradient(90deg, rgba(255,153,51,0.18) 0%, rgba(255,153,51,0.04) 28%, rgba(255,255,255,0.04) 50%, rgba(19,136,8,0.04) 72%, rgba(19,136,8,0.18) 100%)' }}
+      >
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🇮🇳</span>
+          <svg width="28" height="19" viewBox="0 0 30 20" className="rounded-[2px] shadow-sm shrink-0">
+            <rect x="0" y="0" width="30" height="6.67" fill="#FF9933" />
+            <rect x="0" y="6.67" width="30" height="6.67" fill="#FFFFFF" />
+            <rect x="0" y="13.33" width="30" height="6.67" fill="#138808" />
+            <circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" strokeWidth="0.6" />
+            {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map((i) => {
+              const a = (i * Math.PI * 2) / 24;
+              return <line key={i} x1="15" y1="10" x2={15 + 2.4 * Math.cos(a)} y2={10 + 2.4 * Math.sin(a)} stroke="#000080" strokeWidth="0.3" />;
+            })}
+          </svg>
           <div>
-            <h1 className="text-white font-bold text-lg leading-none">VoteGuide India <span className="text-base">🇮🇳</span></h1>
+            <h1 className="text-white font-bold text-lg leading-none">VoteGuide India</h1>
             {profile?.state && <p className="text-saffron-400 text-xs mt-0.5">{profile.state}</p>}
           </div>
         </div>
@@ -93,8 +106,16 @@ export default function Dashboard() {
               <Map size={15} className="text-saffron-400" />
               {profile?.state ? `${profile.state} Polling Booths` : 'Nearby Polling Booths'}
             </div>
-            <div className="flex-1 px-3 pb-3">
+            <div
+              className="flex-1 px-3 pb-3 cursor-pointer relative group"
+              onClick={() => setMapExpanded(true)}
+            >
               <ConstituencyMap state={profile?.state} />
+              <div className="absolute inset-3 flex items-end justify-end opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="bg-black/60 text-white text-[10px] px-2 py-1 rounded-lg backdrop-blur-sm">
+                  Click to expand
+                </div>
+              </div>
             </div>
           </div>
         </aside>
@@ -158,6 +179,27 @@ export default function Dashboard() {
           </div>
         </aside>
       </div>
+
+      {mapExpanded && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6"
+          onClick={() => setMapExpanded(false)}
+        >
+          <div
+            className="relative w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl"
+            style={{ height: '85vh' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setMapExpanded(false)}
+              className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-slate-800 rounded-full w-9 h-9 flex items-center justify-center text-base font-bold shadow-lg transition-colors"
+            >
+              ✕
+            </button>
+            <ConstituencyMap state={profile?.state} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
