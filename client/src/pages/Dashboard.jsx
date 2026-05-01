@@ -74,7 +74,7 @@ export default function Dashboard() {
               <RefreshCw size={13} className={newsLoading ? 'animate-spin' : ''} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-3">
+          <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-3 min-h-0">
             {newsLoading
               ? Array(3).fill(0).map((_, i) => <div key={i} className="glass rounded-xl h-24 animate-pulse" />)
               : (newsExpanded ? news : news.slice(0, 3)).map((n, i) => <NewsCard key={i} {...n} />)
@@ -87,6 +87,15 @@ export default function Dashboard() {
                 {newsExpanded ? '▲ Show less' : `▼ Show ${news.length - 3} more`}
               </button>
             )}
+          </div>
+          <div className="border-t border-white/5 flex flex-col" style={{ height: '260px', minHeight: '260px' }}>
+            <div className="flex items-center gap-2 text-white font-semibold text-sm px-4 py-2.5">
+              <Map size={15} className="text-saffron-400" />
+              {profile?.state ? `${profile.state} Polling Booths` : 'Nearby Polling Booths'}
+            </div>
+            <div className="flex-1 px-3 pb-3">
+              <ConstituencyMap state={profile?.state} />
+            </div>
           </div>
         </aside>
 
@@ -138,15 +147,6 @@ export default function Dashboard() {
           </div>
           <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
             <ElectionTimeline events={events} />
-          </div>
-          <div className="border-t border-white/5 flex flex-col" style={{ height: '260px', minHeight: '260px' }}>
-            <div className="flex items-center gap-2 text-white font-semibold text-sm px-4 py-2.5">
-              <Map size={15} className="text-saffron-400" />
-              {profile?.state ? `${profile.state} Map` : 'India Map'}
-            </div>
-            <div className="flex-1 px-3 pb-3">
-              <ConstituencyMap state={profile?.state} />
-            </div>
           </div>
         </aside>
       </div>
