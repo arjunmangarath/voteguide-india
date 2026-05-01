@@ -11,21 +11,16 @@ function getMapsKey() {
 
 function loadScript(key) {
   if (document.getElementById('gmap-script')) {
-    return new Promise((resolve, reject) => {
-      const deadline = Date.now() + 10000;
-      const check = setInterval(() => {
-        if (window.google) { clearInterval(check); resolve(); }
-        else if (Date.now() > deadline) { clearInterval(check); reject(new Error('timeout')); }
-      }, 150);
+    return new Promise((resolve) => {
+      const check = setInterval(() => { if (window.google) { clearInterval(check); resolve(); } }, 150);
     });
   }
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const s = document.createElement('script');
     s.id = 'gmap-script';
     s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`;
     s.async = true;
     s.onload = resolve;
-    s.onerror = reject;
     document.head.appendChild(s);
   });
 }
@@ -115,7 +110,7 @@ export default function ConstituencyMap({ state }) {
     async function init() {
       const key = await getMapsKey();
       if (!key) { setStatus('error'); return; }
-      try { await loadScript(key); } catch { setStatus('error'); return; }
+      await loadScript(key);
       if (cancelled) return;
 
       if (state) {
