@@ -1,7 +1,11 @@
 {
   "name": "voteguide-india-server",
   "version": "1.0.0",
-  "description": "Election assistant API server",
+  "description": "Election assistant API server for VoteGuide India — AI-powered civic tech companion",
+  "author": "arjunmangarath",
+  "license": "MIT",
+  "keywords": ["elections", "india", "ai", "gemini", "civic-tech", "voter-guide"],
+  "repository": { "type": "git", "url": "https://github.com/arjunmangarath/voteguide-india.git" },
   "engines": { "node": ">=20" },
   "main": "src/index.js",
   "scripts": {
