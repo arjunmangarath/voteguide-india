@@ -21,13 +21,14 @@ router.post('/profile', session, async (req, res) => {
 
 router.put('/profile', session, async (req, res) => {
   try {
-    const { state, voterType, interests } = req.body;
+    const { state, voterType, interests, language } = req.body;
     if (!state || typeof state !== 'string') return res.status(400).json({ error: 'Invalid state' });
     const db = admin.firestore();
     await db.collection('sessions').doc(req.sessionId).set({
       state: state.trim(),
       voterType,
       interests,
+      language: language || null,
       isNewUser: false,
       updatedAt: new Date(),
     }, { merge: true });

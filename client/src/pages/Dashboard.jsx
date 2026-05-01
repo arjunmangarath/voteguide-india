@@ -67,7 +67,11 @@ export default function Dashboard() {
       axios.get('/api/news', { headers }),
       axios.get('/api/calendar', { headers }),
     ]);
-    if (profileRes.status === 'fulfilled') setProfile(profileRes.value.data.profile || {});
+    if (profileRes.status === 'fulfilled') {
+      const p = profileRes.value.data.profile || {};
+      setProfile(p);
+      if (p.language && p.language.name !== 'English') setLangMode(true);
+    }
     if (newsRes.status === 'fulfilled') setNews(newsRes.value.data.news || []);
     if (calRes.status === 'fulfilled') setEvents(calRes.value.data.events || []);
     setNewsLoading(false);
@@ -109,20 +113,23 @@ export default function Dashboard() {
             {profile?.state && (
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-saffron-400 text-xs">{profile.state}</p>
-                {STATE_LANGUAGES[profile.state] && (
-                  <button
-                    onClick={() => setLangMode((p) => !p)}
-                    title={langMode ? 'Switch to English' : `Switch to ${STATE_LANGUAGES[profile.state].name}`}
-                    className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-all ${
-                      langMode
-                        ? 'bg-saffron-500/20 border-saffron-400 text-saffron-400'
-                        : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-300'
-                    }`}
-                  >
-                    <span>🌐</span>
-                    <span>{langMode ? STATE_LANGUAGES[profile.state].native : STATE_LANGUAGES[profile.state].name}</span>
-                  </button>
-                )}
+                {(profile?.language || STATE_LANGUAGES[profile.state]) && (() => {
+                  const lang = profile?.language || STATE_LANGUAGES[profile.state];
+                  return (
+                    <button
+                      onClick={() => setLangMode((p) => !p)}
+                      title={langMode ? 'Switch to English' : `Switch to ${lang.name}`}
+                      className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-all ${
+                        langMode
+                          ? 'bg-saffron-500/20 border-saffron-400 text-saffron-400'
+                          : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-300'
+                      }`}
+                    >
+                      <span>🌐</span>
+                      <span>{langMode ? lang.native : lang.name}</span>
+                    </button>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -209,7 +216,7 @@ export default function Dashboard() {
               <ChatPanel
                 userState={profile?.state}
                 userProfile={profile}
-                language={langMode && STATE_LANGUAGES[profile?.state] ? STATE_LANGUAGES[profile.state] : null}
+                language={langMode ? (profile?.language || STATE_LANGUAGES[profile?.state] || null) : null}
               />
             </div>
             {activeTab === 'news' && (
