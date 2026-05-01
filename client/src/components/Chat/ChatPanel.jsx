@@ -42,7 +42,7 @@ function buildAutoMessage(interests = [], voterType, state) {
   return `${context} I'd like help with: ${topics}. Can you give me a brief overview of each?`;
 }
 
-export default function ChatPanel({ userState, userProfile }) {
+export default function ChatPanel({ userState, userProfile, language }) {
   const [messages, setMessages] = useState([{
     role: 'model',
     content: `Namaste! 🙏 I'm VoteGuide India, your election companion.\n\nI can help you understand Indian elections, voter registration, polling procedures, and upcoming election schedules${userState ? ` in ${userState}` : ' across India'}.\n\nWhat would you like to know?`,
@@ -74,7 +74,10 @@ export default function ChatPanel({ userState, userProfile }) {
       const raw = messages.slice(-10);
       const firstUser = raw.findIndex((m) => m.role === 'user');
       const history = firstUser === -1 ? [] : raw.slice(firstUser).map((m) => ({ role: m.role, content: m.content }));
-      const { data } = await axios.post('/api/chat', { message: msg, history }, {
+      const serverMsg = language
+        ? `[Respond entirely in ${language.name} (${language.native}). Do not use English.] ${msg}`
+        : msg;
+      const { data } = await axios.post('/api/chat', { message: serverMsg, history }, {
         headers: sessionHeaders(),
       });
       setMessages((prev) => [...prev, { role: 'model', content: data.reply }]);
@@ -137,6 +140,12 @@ export default function ChatPanel({ userState, userProfile }) {
       </div>
 
       <div className="p-3 border-t border-white/5">
+        {language && (
+          <div className="flex items-center gap-1.5 mb-2 px-1">
+            <span className="text-xs text-saffron-400">🌐</span>
+            <span className="text-xs text-saffron-400 font-medium">Responding in {language.native} ({language.name})</span>
+          </div>
+        )}
         <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-hide pb-1">
           {QUICK_ACTIONS.map((qa) => (
             <button

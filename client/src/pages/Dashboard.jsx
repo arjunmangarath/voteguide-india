@@ -1,5 +1,44 @@
 import { useEffect, useState } from 'react';
 import { RefreshCw, Newspaper, Calendar, Map, Settings } from 'lucide-react';
+
+const STATE_LANGUAGES = {
+  'Andhra Pradesh':    { name: 'Telugu',    native: 'తెలుగు' },
+  'Arunachal Pradesh': { name: 'Hindi',     native: 'हिंदी' },
+  'Assam':             { name: 'Assamese',  native: 'অসমীয়া' },
+  'Bihar':             { name: 'Hindi',     native: 'हिंदी' },
+  'Chhattisgarh':      { name: 'Hindi',     native: 'हिंदी' },
+  'Goa':               { name: 'Konkani',   native: 'कोंकणी' },
+  'Gujarat':           { name: 'Gujarati',  native: 'ગુજરાતી' },
+  'Haryana':           { name: 'Hindi',     native: 'हिंदी' },
+  'Himachal Pradesh':  { name: 'Hindi',     native: 'हिंदी' },
+  'Jharkhand':         { name: 'Hindi',     native: 'हिंदी' },
+  'Karnataka':         { name: 'Kannada',   native: 'ಕನ್ನಡ' },
+  'Kerala':            { name: 'Malayalam', native: 'മലയാളം' },
+  'Madhya Pradesh':    { name: 'Hindi',     native: 'हिंदी' },
+  'Maharashtra':       { name: 'Marathi',   native: 'मराठी' },
+  'Manipur':           { name: 'Meitei',    native: 'মৈতৈ' },
+  'Meghalaya':         { name: 'Khasi',     native: 'Khasi' },
+  'Mizoram':           { name: 'Mizo',      native: 'Mizo' },
+  'Nagaland':          { name: 'Nagamese',  native: 'Nagamese' },
+  'Odisha':            { name: 'Odia',      native: 'ଓଡ଼ିଆ' },
+  'Punjab':            { name: 'Punjabi',   native: 'ਪੰਜਾਬੀ' },
+  'Rajasthan':         { name: 'Hindi',     native: 'हिंदी' },
+  'Sikkim':            { name: 'Nepali',    native: 'नेपाली' },
+  'Tamil Nadu':        { name: 'Tamil',     native: 'தமிழ்' },
+  'Telangana':         { name: 'Telugu',    native: 'తెలుగు' },
+  'Tripura':           { name: 'Bengali',   native: 'বাংলা' },
+  'Uttar Pradesh':     { name: 'Hindi',     native: 'हिंदी' },
+  'Uttarakhand':       { name: 'Hindi',     native: 'हिंदी' },
+  'West Bengal':       { name: 'Bengali',   native: 'বাংলা' },
+  'Delhi':             { name: 'Hindi',     native: 'हिंदी' },
+  'Jammu and Kashmir': { name: 'Urdu',      native: 'اردو' },
+  'Ladakh':            { name: 'Hindi',     native: 'हिंदी' },
+  'Lakshadweep':       { name: 'Malayalam', native: 'മലയാളം' },
+  'Puducherry':        { name: 'Tamil',     native: 'தமிழ்' },
+  'Andaman and Nicobar Islands': { name: 'Hindi',    native: 'हिंदी' },
+  'Chandigarh':        { name: 'Hindi',     native: 'हिंदी' },
+  'Dadra and Nagar Haveli and Daman and Diu': { name: 'Gujarati', native: 'ગુજરાતી' },
+};
 import { useNavigate } from 'react-router-dom';
 import { sessionHeaders } from '../session';
 import ChatPanel from '../components/Chat/ChatPanel';
@@ -16,6 +55,7 @@ export default function Dashboard() {
   const [newsExpanded, setNewsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('chat');
   const [mapExpanded, setMapExpanded] = useState(false);
+  const [langMode, setLangMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => { loadData(); }, []);
@@ -66,7 +106,25 @@ export default function Dashboard() {
           </svg>
           <div>
             <h1 className="text-white font-bold text-lg leading-none">VoteGuide India</h1>
-            {profile?.state && <p className="text-saffron-400 text-xs mt-0.5">{profile.state}</p>}
+            {profile?.state && (
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-saffron-400 text-xs">{profile.state}</p>
+                {STATE_LANGUAGES[profile.state] && (
+                  <button
+                    onClick={() => setLangMode((p) => !p)}
+                    title={langMode ? 'Switch to English' : `Switch to ${STATE_LANGUAGES[profile.state].name}`}
+                    className={`flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border transition-all ${
+                      langMode
+                        ? 'bg-saffron-500/20 border-saffron-400 text-saffron-400'
+                        : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-300'
+                    }`}
+                  >
+                    <span>🌐</span>
+                    <span>{langMode ? STATE_LANGUAGES[profile.state].native : STATE_LANGUAGES[profile.state].name}</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <button
@@ -148,7 +206,11 @@ export default function Dashboard() {
 
           <div className="flex-1 overflow-hidden">
             <div className={`h-full ${activeTab !== 'chat' ? 'hidden lg:flex' : 'flex'} flex-col`}>
-              <ChatPanel userState={profile?.state} userProfile={profile} />
+              <ChatPanel
+                userState={profile?.state}
+                userProfile={profile}
+                language={langMode && STATE_LANGUAGES[profile?.state] ? STATE_LANGUAGES[profile.state] : null}
+              />
             </div>
             {activeTab === 'news' && (
               <div className="lg:hidden p-3 overflow-y-auto space-y-3 h-full">
