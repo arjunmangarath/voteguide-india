@@ -23,6 +23,11 @@ const ELECTION_EVENTS = [
   { title: 'Karnataka Local Body Elections', date: '2026-08-20', type: 'voting' },
 ];
 
+/**
+ * Returns election events filtered to the last 12 months and future, optionally scoped by state.
+ * @param {string} state - Optional state name to filter results
+ * @returns {Promise<Array<{title: string, date: string, type: string, isPast: boolean}>>}
+ */
 async function getElectionCalendar(state = '') {
   const now = new Date();
   const oneYearAgo = new Date();
@@ -37,7 +42,7 @@ async function getElectionCalendar(state = '') {
     const stateLower = state.toLowerCase();
     const stateSpecific = ['delhi', 'bihar', 'jharkhand', 'maharashtra', 'haryana',
       'jammu', 'kashmir', 'tamil nadu', 'west bengal', 'uttar pradesh',
-      'maharashtra', 'kerala', 'karnataka'];
+      'kerala', 'karnataka'];
     events = events.filter(
       (e) =>
         e.title.toLowerCase().includes(stateLower) ||

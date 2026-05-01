@@ -13,9 +13,11 @@ function getMapsKey() {
 }
 
 function loadScript(key) {
-  if (document.getElementById('gmap-script')) {
+  const existing = document.getElementById('gmap-script');
+  if (existing) {
     return new Promise((resolve) => {
-      const check = setInterval(() => { if (window.google) { clearInterval(check); resolve(); } }, 150);
+      if (window.google) { resolve(); return; }
+      existing.addEventListener('load', resolve, { once: true });
     });
   }
   return new Promise((resolve) => {
@@ -139,16 +141,16 @@ export default function ConstituencyMap({ state }) {
   }, [state, buildMap]);
 
   return (
-    <div className="relative rounded-xl overflow-hidden w-full h-full bg-slate-100">
-      <div ref={mapRef} className="w-full h-full" />
+    <div className="relative rounded-xl overflow-hidden w-full h-full bg-slate-100" role="region" aria-label="Polling booth map">
+      <div ref={mapRef} className="w-full h-full" aria-label="Interactive map of nearby polling booths" />
       {status === 'loading' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl" role="status" aria-live="polite">
           <Loader2 size={18} className="text-saffron-400 animate-spin mb-1" />
           <p className="text-slate-500 text-xs">Finding polling booths…</p>
         </div>
       )}
       {status === 'error' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl gap-1">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 rounded-xl gap-1" role="status" aria-live="polite">
           <Map size={18} className="text-slate-400" />
           <p className="text-slate-500 text-xs text-center px-4">Map unavailable.<br />Check API key configuration.</p>
         </div>

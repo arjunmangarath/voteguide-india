@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { RefreshCw, Newspaper, Calendar, Map, Settings } from 'lucide-react';
 
 const STATE_LANGUAGES = {
@@ -57,8 +57,18 @@ export default function Dashboard() {
   const [mapExpanded, setMapExpanded] = useState(false);
   const [langMode, setLangMode] = useState(false);
   const navigate = useNavigate();
+  const mapModalRef = useRef(null);
 
   useEffect(() => { loadData(); }, []);
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const btn = mapModalRef.current?.querySelector('button');
+    if (btn) btn.focus();
+    const handler = (e) => { if (e.key === 'Escape') setMapExpanded(false); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [mapExpanded]);
 
   async function loadData() {
     const headers = sessionHeaders();
@@ -204,6 +214,7 @@ export default function Dashboard() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
+                  aria-selected={activeTab === tab.id}
                   style={activeTab === tab.id ? { color: tab.color, borderBottomColor: tab.color } : {}}
                   className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors border-b-2 border-transparent ${activeTab === tab.id ? '' : 'text-slate-500'}`}
                 >
@@ -255,8 +266,12 @@ export default function Dashboard() {
         <div
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6"
           onClick={() => setMapExpanded(false)}
+          ref={mapModalRef}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Expanded polling booth map"
             className="relative w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl"
             style={{ height: '85vh' }}
             onClick={(e) => e.stopPropagation()}

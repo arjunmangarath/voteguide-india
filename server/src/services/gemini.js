@@ -19,6 +19,11 @@ Guidelines:
 - Support both first-time voters and experienced voters
 - Respond in the language specified by the user's context prefix. If no language is specified, respond in English. You support all Indian regional languages including Hindi, Bengali, Telugu, Marathi, Tamil, Gujarati, Kannada, Malayalam, Punjabi, Odia, and Urdu.`;
 
+/**
+ * Returns true if the error is a rate-limit or quota-exhaustion response from the Gemini API.
+ * @param {Error} err
+ * @returns {boolean}
+ */
 function isRateLimited(err) {
   const msg = String(err?.message || '');
   return err?.status === 429 || err?.status === 503 ||
@@ -27,6 +32,13 @@ function isRateLimited(err) {
     msg.includes('quota');
 }
 
+/**
+ * Sends a single message to a specific Gemini model and returns the text response.
+ * @param {string} modelName - Gemini model identifier
+ * @param {string} fullMessage - The complete message including context prefix
+ * @param {Array<{role: string, content: string}>} history - Prior conversation turns
+ * @returns {Promise<string>}
+ */
 async function tryChat(modelName, fullMessage, history) {
   const chat = ai.chats.create({
     model: modelName,
@@ -41,6 +53,14 @@ async function tryChat(modelName, fullMessage, history) {
   return response.text;
 }
 
+/**
+ * Sends a chat message to Gemini with user context, falling back across models on failure.
+ * Throws Error('RATE_LIMITED') or Error('GEMINI_ERROR') if all attempts fail.
+ * @param {string} message - User's message text
+ * @param {Object} userContext - Profile data (state, voterType, language)
+ * @param {Array<{role: string, content: string}>} history - Sanitised conversation history
+ * @returns {Promise<string>} AI reply text
+ */
 async function getChatResponse(message, userContext, history = []) {
   const contextPrefix = userContext?.state
     ? `[User context: ${userContext.voterType || 'voter'} from ${userContext.state}] `

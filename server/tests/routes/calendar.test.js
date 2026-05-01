@@ -58,3 +58,11 @@ test('GET /api/calendar with state param passes state to service', async () => {
     .set('x-session-id', SESSION_ID);
   expect(mockGetCalendar).toHaveBeenCalledWith('Bihar');
 });
+
+test('GET /api/calendar returns 500 when service throws', async () => {
+  mockGetCalendar.mockRejectedValueOnce(new Error('Calendar service error'));
+  const res = await request(app)
+    .get('/api/calendar')
+    .set('x-session-id', SESSION_ID);
+  expect(res.status).toBe(500);
+});

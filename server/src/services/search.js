@@ -73,6 +73,12 @@ const STATE_NEWS = {
   ],
 };
 
+/**
+ * Fetches live Indian election news via Google Custom Search API.
+ * Falls back to curated ECI content if the API errors or returns no results.
+ * @param {string} state - Optional state name to focus the search query
+ * @returns {Promise<Array<{title: string, snippet: string, link: string, source: string, image: string|null}>>}
+ */
 async function fetchElectionNews(state = '') {
   try {
     const query = state ? `${state} election 2026 India` : 'India upcoming elections 2026 ECI';

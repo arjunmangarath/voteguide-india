@@ -17,7 +17,7 @@ export default function ElectionTimeline({ events = [] }) {
     const colors = TYPE_COLORS[event.type] || { dot: 'bg-slate-500', badge: 'bg-slate-600' };
 
     return (
-      <div key={i} className={`flex gap-3 items-start ${event.isPast ? 'opacity-50' : ''}`}>
+      <li key={i} role="listitem" className={`flex gap-3 items-start ${event.isPast ? 'opacity-50' : ''}`}>
         <div className="flex flex-col items-center">
           <div className={`w-2.5 h-2.5 rounded-full mt-1 shrink-0 ${event.isPast ? 'bg-slate-500' : colors.dot}`} />
           {i < arr.length - 1 && <div className="w-px flex-1 bg-white/10 mt-1 min-h-[24px]" />}
@@ -39,7 +39,7 @@ export default function ElectionTimeline({ events = [] }) {
             {event.isPast && <span className="text-xs text-slate-500 italic">Completed</span>}
           </div>
         </div>
-      </div>
+      </li>
     );
   }
 
@@ -52,13 +52,17 @@ export default function ElectionTimeline({ events = [] }) {
       {upcoming.length > 0 && (
         <>
           <p className="text-xs font-semibold text-saffron-400 uppercase tracking-wide mb-3">Upcoming</p>
-          {upcoming.map((e, i) => renderEvent(e, i, upcoming))}
+          <ol role="list" className="space-y-0">
+            {upcoming.map((e, i) => renderEvent(e, i, upcoming))}
+          </ol>
         </>
       )}
       {past.length > 0 && (
         <>
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mt-4 mb-3">Past (Last 12 months)</p>
-          {past.map((e, i) => renderEvent(e, i, past))}
+          <ol role="list" className="space-y-0">
+            {past.map((e, i) => renderEvent(e, i, past))}
+          </ol>
         </>
       )}
     </div>

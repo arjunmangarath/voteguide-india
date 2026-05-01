@@ -75,3 +75,12 @@ test('PUT /api/auth/profile returns 400 without session ID', async () => {
     .send({ state: 'Bihar' });
   expect(res.status).toBe(400);
 });
+
+test('POST /api/auth/profile returns 500 when Firestore fails', async () => {
+  mockGet.mockRejectedValueOnce(new Error('Firestore unavailable'));
+  const res = await request(app)
+    .post('/api/auth/profile')
+    .set('x-session-id', SESSION_ID)
+    .send({});
+  expect(res.status).toBe(500);
+});
