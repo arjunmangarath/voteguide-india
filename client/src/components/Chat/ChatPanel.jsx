@@ -70,7 +70,9 @@ export default function ChatPanel({ userState, userProfile }) {
     setMessages((prev) => [...prev, { role: 'user', content: msg }]);
     setLoading(true);
     try {
-      const history = messages.slice(-10).map((m) => ({ role: m.role, content: m.content }));
+      const raw = messages.slice(-10);
+      const firstUser = raw.findIndex((m) => m.role === 'user');
+      const history = firstUser === -1 ? [] : raw.slice(firstUser).map((m) => ({ role: m.role, content: m.content }));
       const { data } = await axios.post('/api/chat', { message: msg, history }, {
         headers: sessionHeaders(),
       });

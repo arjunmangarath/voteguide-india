@@ -17,7 +17,7 @@ Guidelines:
 - Answer in English; if user writes in Hindi or regional language, respond in that language`;
 
 async function getChatResponse(message, userContext, history = []) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const contextPrefix = userContext?.state
     ? `[User context: ${userContext.voterType || 'voter'} from ${userContext.state}] `
@@ -28,7 +28,7 @@ async function getChatResponse(message, userContext, history = []) {
       role: h.role,
       parts: [{ text: h.content }],
     })),
-    systemInstruction: SYSTEM_PROMPT,
+    systemInstruction: { role: 'system', parts: [{ text: SYSTEM_PROMPT }] },
   });
 
   const result = await chat.sendMessage(contextPrefix + message);

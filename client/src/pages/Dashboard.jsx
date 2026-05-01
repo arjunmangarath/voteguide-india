@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [news, setNews] = useState([]);
   const [events, setEvents] = useState([]);
   const [newsLoading, setNewsLoading] = useState(true);
+  const [newsExpanded, setNewsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('chat');
   const navigate = useNavigate();
 
@@ -75,9 +76,17 @@ export default function Dashboard() {
           </div>
           <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-3">
             {newsLoading
-              ? Array(4).fill(0).map((_, i) => <div key={i} className="glass rounded-xl h-24 animate-pulse" />)
-              : news.map((n, i) => <NewsCard key={i} {...n} />)
+              ? Array(3).fill(0).map((_, i) => <div key={i} className="glass rounded-xl h-24 animate-pulse" />)
+              : (newsExpanded ? news : news.slice(0, 3)).map((n, i) => <NewsCard key={i} {...n} />)
             }
+            {!newsLoading && news.length > 3 && (
+              <button
+                onClick={() => setNewsExpanded((p) => !p)}
+                className="w-full text-xs text-slate-500 hover:text-saffron-400 py-2 border border-white/5 rounded-xl transition-colors"
+              >
+                {newsExpanded ? '▲ Show less' : `▼ Show ${news.length - 3} more`}
+              </button>
+            )}
           </div>
         </aside>
 

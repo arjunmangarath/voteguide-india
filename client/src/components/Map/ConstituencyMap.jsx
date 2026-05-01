@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapPin } from 'lucide-react';
 
-const MAPS_KEY = import.meta.env.VITE_MAPS_API_KEY;
+let mapsKeyPromise = null;
+function getMapsKey() {
+  if (!mapsKeyPromise) {
+    mapsKeyPromise = fetch('/api/config').then((r) => r.json()).then((d) => d.mapsKey).catch(() => '');
+  }
+  return mapsKeyPromise;
+}
 
-function loadMapsScript() {
+function loadMapsScript(key) {
+  if (!key) return;
   if (document.getElementById('gmap-script') || window.google) return;
   const s = document.createElement('script');
   s.id = 'gmap-script';
-  s.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}&libraries=places`;
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`;
   s.async = true;
   document.head.appendChild(s);
 }
@@ -15,11 +22,20 @@ function loadMapsScript() {
 export default function ConstituencyMap({ state }) {
   const mapRef = useRef(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-
-  useEffect(() => { loadMapsScript(); }, []);
+  const [googleReady, setGoogleReady] = useState(!!window.google);
 
   useEffect(() => {
-    if (!window.google || !mapRef.current) return;
+    getMapsKey().then((key) => {
+      loadMapsScript(key);
+      const t = setInterval(() => {
+        if (window.google) { clearInterval(t); setGoogleReady(true); }
+      }, 300);
+      return () => clearInterval(t);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!googleReady || !mapRef.current) return;
     const geocoder = new window.google.maps.Geocoder();
     const query = state ? `${state}, India` : 'India';
 
@@ -46,14 +62,7 @@ export default function ConstituencyMap({ state }) {
         setMapLoaded(true);
       }
     });
-  }, [state]);
-
-  const [googleReady, setGoogleReady] = useState(!!window.google);
-  useEffect(() => {
-    if (googleReady) return;
-    const t = setInterval(() => { if (window.google) { clearInterval(t); setGoogleReady(true); } }, 500);
-    return () => clearInterval(t);
-  }, [googleReady]);
+  }, [googleReady, state]);
 
   return (
     <div className="relative rounded-xl overflow-hidden" style={{ height: '200px' }}>

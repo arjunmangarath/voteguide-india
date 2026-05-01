@@ -12,6 +12,7 @@ const calendarRoutes = require('./routes/calendar');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+app.set('trust proxy', 1);
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
@@ -20,6 +21,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.get('/api/config', (req, res) => {
+  res.json({ mapsKey: process.env.MAPS_API_KEY || '' });
+});
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 app.get('*', (req, res) => {
