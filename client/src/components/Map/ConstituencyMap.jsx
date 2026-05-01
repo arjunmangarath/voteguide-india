@@ -4,7 +4,10 @@ import { Loader2, Map } from 'lucide-react';
 let mapsKeyPromise = null;
 function getMapsKey() {
   if (!mapsKeyPromise) {
-    mapsKeyPromise = fetch('/api/config').then((r) => r.json()).then((d) => d.mapsKey).catch(() => '');
+    const buildKey = import.meta.env.VITE_MAPS_API_KEY;
+    mapsKeyPromise = buildKey
+      ? Promise.resolve(buildKey)
+      : fetch('/api/config').then((r) => r.json()).then((d) => d.mapsKey || '').catch(() => '');
   }
   return mapsKeyPromise;
 }
