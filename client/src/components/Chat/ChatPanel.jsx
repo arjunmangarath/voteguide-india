@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2 } from 'lucide-react';
 import { sessionHeaders } from '../../session';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 const QUICK_ACTIONS = [
   { label: '📅 Show Timeline', msg: 'Show me the upcoming election timeline for India' },
@@ -95,12 +96,32 @@ export default function ChatPanel({ userState, userProfile }) {
               animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+              <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-saffron-500 text-white rounded-br-sm'
                   : 'glass text-slate-200 rounded-bl-sm'
               }`}>
-                {msg.content}
+                {msg.role === 'user' ? (
+                  <span>{msg.content}</span>
+                ) : (
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                      ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2">{children}</ol>,
+                      li: ({ children }) => <li className="text-slate-200">{children}</li>,
+                      h1: ({ children }) => <h1 className="text-white font-bold text-base mb-2 mt-3">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-white font-semibold text-sm mb-1 mt-3">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-saffron-400 font-semibold text-sm mb-1 mt-2">{children}</h3>,
+                      hr: () => <hr className="border-white/10 my-3" />,
+                      blockquote: ({ children }) => <blockquote className="border-l-2 border-saffron-400 pl-3 italic text-slate-300">{children}</blockquote>,
+                      code: ({ children }) => <code className="bg-white/10 px-1 rounded text-xs">{children}</code>,
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                )}
               </div>
             </motion.div>
           ))}

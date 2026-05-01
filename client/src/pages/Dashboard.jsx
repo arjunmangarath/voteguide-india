@@ -139,12 +139,14 @@ export default function Dashboard() {
           <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
             <ElectionTimeline events={events} />
           </div>
-          <div className="p-3 border-t border-white/5">
-            <div className="flex items-center gap-2 text-white font-semibold text-sm mb-3">
+          <div className="border-t border-white/5 flex flex-col" style={{ height: '260px', minHeight: '260px' }}>
+            <div className="flex items-center gap-2 text-white font-semibold text-sm px-4 py-2.5">
               <Map size={15} className="text-saffron-400" />
               {profile?.state ? `${profile.state} Map` : 'India Map'}
             </div>
-            <ConstituencyMap state={profile?.state} />
+            <div className="flex-1 px-3 pb-3">
+              <ConstituencyMap state={profile?.state} />
+            </div>
           </div>
         </aside>
       </div>

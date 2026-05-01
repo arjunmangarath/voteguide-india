@@ -65,7 +65,7 @@ export default function ConstituencyMap({ state }) {
   }, [googleReady, state]);
 
   return (
-    <div className="relative rounded-xl overflow-hidden" style={{ height: '200px' }}>
+    <div className="relative rounded-xl overflow-hidden w-full h-full">
       <div ref={mapRef} className="w-full h-full" />
       {!mapLoaded && (
         <div className="absolute inset-0 flex flex-col items-center justify-center glass">
